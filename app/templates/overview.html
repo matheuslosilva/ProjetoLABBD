@@ -4,10 +4,60 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Overview</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
 </head>
 <body>
     <h1>Overview</h1>
-    <p>Welcome, {{ username }}!</p>
-    <a href="{{ url_for('main.reports') }}">Go to Reports</a>
+
+    <!-- Flash messages block -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            <div class="flash-messages">
+                {% for category, message in messages %}
+                    <div class="flash-message {{ category }}">{{ message }}</div>
+                {% endfor %}
+            </div>
+        {% endif %}
+    {% endwith %}
+
+    <h2>User Details</h2>
+    <ul>
+        <li><strong>User ID:</strong> {{ user_details.USER_ID }}</li>
+        <li><strong>Líder ID:</strong> {{ user_details.ID_LIDER }}</li>
+        <li><strong>Nome do Líder:</strong> {{ user_details.LIDER_NOME }}</li>
+        <li><strong>Cargo:</strong> {{ user_details.CARGO }}</li>
+        <li><strong>Nação:</strong> {{ user_details.NACAO }}</li>
+        <li><strong>Espécie:</strong> {{ user_details.ESPECIE }}</li>
+        <li><strong>Nome da Facção:</strong> {{ user_details.FACCOES }}</li>
+        <li><strong>Ideologia:</strong> {{ user_details.IDEOLOGIA }}</li>
+        <li><strong>Quantidade de Nações:</strong> {{ user_details.QTD_NACOES }}</li>
+        <li><strong>Nome da Nação:</strong> {{ user_details.NACAO_NOME }}</li>
+        <li><strong>Quantidade de Planetas:</strong> {{ user_details.QTD_PLANETAS }}</li>
+        <li><strong>Nome da Espécie:</strong> {{ user_details.ESPECIE_NOME }}</li>
+        <li><strong>Planeta de Origem:</strong> {{ user_details.PLANETA_OR }}</li>
+        <li><strong>Inteligente:</strong> {{ user_details.INTELIGENTE }}</li>
+    </ul>
+
+    <h2>Funções Disponíveis</h2>
+
+    {% if user_details.FACCOES %}
+        <a href="{{ url_for('main.lider') }}">Funções de Líder</a>
+        <a href="{{ url_for('main.lider_report') }}">Relatórios de Líder</a>
+    {% endif %}
+    
+    {% if user_details.CARGO != 'CIENTISTA ' and user_details.CARGO != 'COMANDANTE' %}
+        <a href="{{ url_for('main.official_report') }}">Relatórios de Oficial</a>
+    {% endif %}
+
+
+    {% if user_details.CARGO == 'CIENTISTA ' %}
+        <a href="{{ url_for('main.cientista') }}">Gerenciar Estrelas</a>
+        <a href="{{ url_for('main.cientista_report') }}">Relatórios de Cientista</a>
+    {% elif user_details.CARGO == 'COMANDANTE' %}
+        <a href="{{ url_for('main.comandante') }}">Gerenciar Nação</a>
+        <a href="{{ url_for('main.comandante_report') }}">Relatórios de Comandante</a>
+    {% endif %}
+
+    <a href="{{ url_for('main.index') }}">Logout</a>
 </body>
 </html>
