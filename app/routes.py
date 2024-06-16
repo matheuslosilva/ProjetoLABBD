@@ -95,12 +95,6 @@ def overview():
 
 
 
-@main.route('/reports')
-def reports():
-    if 'userid' not in session:
-        return redirect(url_for('main.index'))
-    return render_template('reports.html')
-
 @main.route('/cientista')
 def cientista():
     if 'userid' not in session or session['cargo'] != 'CIENTISTA ':
@@ -128,6 +122,8 @@ def create_estrela():
     cursor = connection.cursor()
     try:
         cursor.callproc('package_cientista.create_estrela', [id_estrela, nome, classificacao, massa, x, y, z])
+        cursor.callproc('sistema_pkg.insert_log', [userid, 'Cientista criou estrela'])
+
         connection.commit()
         flash('Star created successfully!', 'success')
     except Exception as e:
