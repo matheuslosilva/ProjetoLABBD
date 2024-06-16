@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Relatório de Líder</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+</head>
+<body>
+    <h1>Relatório de Comunidades da Facção</h1>
+    <table>
+        <thead>
+            <tr>
+                <th>Planeta</th>
+                <th>Nação</th>
+                <th>Comunidades</th>
+                <th>Quantidade de Comunidades</th>
+                <th>Sistema</th>
+                <th>Espécies</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for row in communities %}
+                <tr>
+                    <td>{{ row[0] }}</td>
+                    <td>{{ row[1] }}</td>
+                    <td>{{ row[2] }}</td>
+                    <td>{{ row[3] }}</td>
+                    <td>{{ row[4] }}</td>
+                    <td>{{ row[5] }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <a href="{{ url_for('main.overview') }}">Voltar</a>
+</body>
+</html>

@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Funções de Comandante</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    <script>
+        function toggleFederationSection() {
+            var includeSection = document.getElementById('includeFederationSection');
+            var excludeSection = document.getElementById('excludeFederationSection');
+            if (includeSection.style.display === 'none') {
+                includeSection.style.display = 'block';
+                excludeSection.style.display = 'none';
+            } else {
+                includeSection.style.display = 'none';
+                excludeSection.style.display = 'block';
+            }
+        }
+    </script>
+</head>
+<body>
+    <h1>Funções de Comandante</h1>
+
+    <!-- Flash messages block -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            <div class="flash-messages">
+                {% for category, message in messages %}
+                    <div class="flash-message {{ category }}">{{ message }}</div>
+                {% endfor %}
+            </div>
+        {% endif %}
+    {% endwith %}
+
+    <h2>Gerenciar Federação</h2>
+
+    {% if federation %}
+        <div id="excludeFederationSection" style="display: block;">
+            <h3>Excluir da Federação</h3>
+            <form action="{{ url_for('main.manage_federation') }}" method="post">
+                <input type="hidden" name="action" value="excluir">
+                <p>Você está atualmente na federação: {{ federation }}</p>
+                <button type="submit">Excluir da Federação</button>
+            </form>
+        </div>
+    {% else %}
+        <div id="includeFederationSection" style="display: block;">
+            <h3>Incluir em uma Federação</h3>
+            <form action="{{ url_for('main.manage_federation') }}" method="post">
+                <input type="hidden" name="action" value="incluir">
+                <label for="federation_name">Selecione a Federação:</label>
+                <select id="federation_name" name="federation_name">
+                    {% for federation in available_federations %}
+                        <option value="{{ federation }}">{{ federation }}</option>
+                    {% endfor %}
+                </select>
+                <button type="submit">Incluir na Federação</button>
+            </form>
+
+            <h3>Criar Nova Federação</h3>
+            <form action="{{ url_for('main.manage_federation') }}" method="post">
+                <input type="hidden" name="action" value="incluir">
+                <label for="new_federation_name">Nome da Nova Federação:</label>
+                <input type="text" id="new_federation_name" name="federation_name" required>
+                <button type="submit">Criar e Incluir na Federação</button>
+            </form>
+        </div>
+    {% endif %}
+
+    <h2>Adicionar Dominância</h2>
+    {% if no_planets %}
+        <p>Não há planetas disponíveis para dominância.</p>
+    {% else %}
+        <form action="{{ url_for('main.add_dominance') }}" method="post">
+            <label for="planeta">Selecione o Planeta:</label>
+            <select id="planeta" name="planeta">
+                {% for planeta in available_planets %}
+                    <option value="{{ planeta }}">{{ planeta }}</option>
+                {% endfor %}
+            </select>
+            <button type="submit">Adicionar Dominância</button>
+        </form>
+    {% endif %}
+
+    <a href="{{ url_for('main.overview') }}">Voltar</a>
+</body>
+</html>

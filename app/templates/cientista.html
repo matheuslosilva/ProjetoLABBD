@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cientista</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+</head>
+<body>
+    <h1>Manage Stars</h1>
+
+    <!-- Flash messages block -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            <div class="flash-messages">
+                {% for category, message in messages %}
+                    <div class="flash-message {{ category }}">{{ message }}</div>
+                {% endfor %}
+            </div>
+        {% endif %}
+    {% endwith %}
+
+    <form id="create-estrela-form" method="post" action="{{ url_for('main.create_estrela') }}">
+        <h2>Create Star</h2>
+        <label for="id_estrela">Star ID:</label>
+        <input type="text" id="id_estrela" name="id_estrela" required>
+        <label for="nome">Name:</label>
+        <input type="text" id="nome" name="nome" required>
+        <label for="classificacao">Classification:</label>
+        <input type="text" id="classificacao" name="classificacao" required>
+        <label for="massa">Mass:</label>
+        <input type="number" id="massa" name="massa" required>
+        <label for="x">X Coordinate:</label>
+        <input type="number" id="x" name="x" required>
+        <label for="y">Y Coordinate:</label>
+        <input type="number" id="y" name="y" required>
+        <label for="z">Z Coordinate:</label>
+        <input type="number" id="z" name="z" required>
+        <button type="submit">Create Star</button>
+    </form>
+
+    <form id="update-estrela-form" method="post" action="{{ url_for('main.update_estrela') }}">
+        <h2>Update Star</h2>
+        <label for="id_estrela">Star ID:</label>
+        <input type="text" id="id_estrela" name="id_estrela" required>
+        <label for="nome">Name:</label>
+        <input type="text" id="nome" name="nome" required>
+        <label for="classificacao">Classification:</label>
+        <input type="text" id="classificacao" name="classificacao" required>
+        <label for="massa">Mass:</label>
+        <input type="number" id="massa" name="massa" required>
+        <label for="x">X Coordinate:</label>
+        <input type="number" id="x" name="x" required>
+        <label for="y">Y Coordinate:</label>
+        <input type="number" id="y" name="y" required>
+        <label for="z">Z Coordinate:</label>
+        <input type="number" id="z" name="z" required>
+        <button type="submit">Update Star</button>
+    </form>
+
+    <form id="delete-estrela-form" method="post" action="{{ url_for('main.delete_estrela') }}">
+        <h2>Delete Star</h2>
+        <label for="id_estrela">Star ID:</label>
+        <input type="text" id="id_estrela" name="id_estrela" required>
+        <button type="submit">Delete Star</button>
+    </form>
+
+    <form id="read-estrela-form" method="post" action="{{ url_for('main.read_estrela') }}">
+        <h2>Read Star</h2>
+        <label for="id_estrela">Star ID:</label>
+        <input type="text" id="id_estrela" name="id_estrela" required>
+        <button type="submit">Read Star</button>
+    </form>
+
+    {% if estrela %}
+        <h2>Star Details</h2>
+        <p>ID: {{ estrela.id_estrela }}</p>
+        <p>Name: {{ estrela.nome }}</p>
+        <p>Classification: {{ estrela.classificacao }}</p>
+        <p>Mass: {{ estrela.massa }}</p>
+        <p>X Coordinate: {{ estrela.x }}</p>
+        <p>Y Coordinate: {{ estrela.y }}</p>
+        <p>Z Coordinate: {{ estrela.z }}</p>
+    {% endif %}
+
+    <a href="{{ url_for('main.overview') }}">Back to Overview</a>
+</body>
+</html>

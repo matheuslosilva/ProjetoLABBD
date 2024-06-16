@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Relatório de Comandante</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+</head>
+<body>
+    <h1>Relatório de Comandante</h1>
+
+    <h2>Planetas Dominados</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Planeta</th>
+                <th>Nação Dominante</th>
+                <th>Data Início</th>
+                <th>Data Fim</th>
+                <th>Quantidade de Comunidades</th>
+                <th>Quantidade de Espécies</th>
+                <th>Quantidade de Habitantes</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for row in dominated_planets %}
+                <tr>
+                    <td>{{ row[0] }}</td>
+                    <td>{{ row[1] }}</td>
+                    <td>{{ row[2] }}</td>
+                    <td>{{ row[3] }}</td>
+                    <td>{{ row[4] }}</td>
+                    <td>{{ row[5] }}</td>
+                    <td>{{ row[6] }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <h2>Planetas com Potencial de Expansão</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Planeta</th>
+                <th>Classificação</th>
+                <th>Massa</th>
+                <th>Raio</th>
+                <th>Sistema</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for row in potential_planets %}
+                <tr>
+                    <td>{{ row[0] }}</td>
+                    <td>{{ row[1] }}</td>
+                    <td>{{ row[2] }}</td>
+                    <td>{{ row[3] }}</td>
+                    <td>{{ row[4] }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <a href="{{ url_for('main.overview') }}">Voltar</a>
+</body>
+</html>

@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Funções de Líder</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    <script>
+        function toggleNewCommunity() {
+            var createSection = document.getElementById('createCommunitySection');
+            var selectSection = document.getElementById('selectCommunitySection');
+            if (createSection.style.display === 'none') {
+                createSection.style.display = 'block';
+                selectSection.style.display = 'none';
+            } else {
+                createSection.style.display = 'none';
+                selectSection.style.display = 'block';
+            }
+        }
+    </script>
+</head>
+<body>
+    <h1>Funções de Líder</h1>
+
+    <!-- Flash messages block -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            <div class="flash-messages">
+                {% for category, message in messages %}
+                    <div class="flash-message {{ category }}">{{ message }}</div>
+                {% endfor %}
+            </div>
+        {% endif %}
+    {% endwith %}
+
+    <form action="{{ url_for('main.update_faction_name') }}" method="post">
+        <label for="new_name">Novo Nome da Facção:</label>
+        <input type="text" id="new_name" name="new_name" required>
+        <button type="submit">Atualizar Nome</button>
+    </form>
+
+    <form action="{{ url_for('main.change_faction_leader') }}" method="post">
+        <label for="new_cpi">Novo CPI do Líder:</label>
+        <select id="new_cpi" name="new_cpi" required>
+            {% for cpi in cpis %}
+                <option value="{{ cpi.cpi }}">{{ cpi.nome }} ({{ cpi.cpi }})</option>
+            {% endfor %}
+        </select>
+        <button type="submit">Indicar Novo Líder</button>
+    </form>
+
+    <h2>Credenciar Comunidade</h2>
+    <button type="button" onclick="toggleNewCommunity()">Credenciar Nova Comunidade</button>
+    <button type="button" onclick="toggleNewCommunity()">Selecionar Comunidade Existente</button>
+
+    <div id="createCommunitySection" style="display: none;">
+        <h3>Criar Nova Comunidade</h3>
+        <form action="{{ url_for('main.credenciar_comunidade') }}" method="post">
+            <input type="hidden" name="action" value="create">
+            <label for="especie">Espécie:</label>
+            <select id="especie" name="especie">
+                {% for especie in species %}
+                    <option value="{{ especie }}">{{ especie }}</option>
+                {% endfor %}
+            </select>
+            <label for="comunidade">Comunidade:</label>
+            <input type="text" id="comunidade" name="comunidade" required>
+            <label for="qtd_habitantes">Quantidade de Habitantes:</label>
+            <input type="number" id="qtd_habitantes" name="qtd_habitantes" required>
+            <label for="planeta">Selecione o Planeta:</label>
+            <select id="planeta" name="planeta">
+                {% for planeta in valid_planets %}
+                    <option value="{{ planeta }}">{{ planeta }}</option>
+                {% endfor %}
+            </select>
+            <button type="submit">Credenciar Comunidade</button>
+        </form>
+    </div>
+
+    <div id="selectCommunitySection" style="display: block;">
+        <h3>Selecionar Comunidade Existente</h3>
+        {% if no_communities %}
+            <p>Não há comunidades que não estejam habitando algum outro planeta no momento.</p>            
+        {% else %}
+            <form action="{{ url_for('main.add_comunidades') }}" method="post">
+                <label for="comunidade">Selecione a Comunidade:</label>
+                <select id="comunidade" name="comunidade">
+                    {% for comunidade in existing_communities %}
+                        <option value="{{ comunidade.comunidade }} - {{ comunidade.especie }}">{{ comunidade.comunidade }} - {{ comunidade.especie }}</option>
+                    {% endfor %}
+                </select>
+                <button type="submit">Credenciar Comunidade</button>
+            </form>
+        {% endif %}
+    </div>
+
+    <form action="{{ url_for('main.remover_faccao_nacao') }}" method="post">
+        <label for="nacao">Nação:</label>
+        <select id="nacao" name="nacao">
+            {% for nacao in nations %}
+                <option value="{{ nacao }}">{{ nacao }}</option>
+            {% endfor %}
+        </select>
+        <button type="submit">Remover Facção da Nação</button>
+    </form>
+
+    <a href="{{ url_for('main.overview') }}">Voltar</a>
+</body>
+</html>

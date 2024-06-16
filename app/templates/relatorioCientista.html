@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Relatório de Cientista</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+</head>
+<body>
+    <h1>Relatório de Dados Astronômicos</h1>
+    <table>
+        <thead>
+            <tr>
+                <th>ID Estrela</th>
+                <th>Nome da Estrela</th>
+                <th>Classificação</th>
+                <th>Massa</th>
+                <th>Coordenadas (X, Y, Z)</th>
+                <th>Nome do Sistema</th>
+                <th>ID Planeta Orbitado</th>
+                <th>Distância Mínima</th>
+                <th>Distância Máxima</th>
+                <th>Período Orbital</th>
+                <th>Estrela sem Planeta</th>
+                <th>Quantidade de Planetas Orbitando</th>
+                <th>Dados Faltantes</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for row in data %}
+                <tr>
+                    <td>{{ row[0] }}</td>
+                    <td>{{ row[1] }}</td>
+                    <td>{{ row[2] }}</td>
+                    <td>{{ row[3] }}</td>
+                    <td>({{ row[4] }}, {{ row[5] }}, {{ row[6] }})</td>
+                    <td>{{ row[7] }}</td>
+                    <td>{{ row[8] }}</td>
+                    <td>{{ row[9] }}</td>
+                    <td>{{ row[10] }}</td>
+                    <td>{{ row[11] }}</td>
+                    <td>{{ row[12] }}</td>
+                    <td>{{ row[13] }}</td>
+                    <td>{{ row[14] }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <a href="{{ url_for('main.overview') }}">Voltar</a>
+</body>
+</html>
