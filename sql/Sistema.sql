@@ -11,6 +11,8 @@ CREATE OR REPLACE PACKAGE sistema_pkg IS
     
     PROCEDURE get_all_cpis(p_cursor OUT SYS_REFCURSOR);
 
+    PROCEDURE insert_missing_users();
+
 END sistema_pkg;
 
 
@@ -29,18 +31,18 @@ CREATE OR REPLACE PACKAGE BODY sistema_pkg IS
         INSERT INTO USERS (PASSWORD, ID_LIDER)
         VALUES (v_hashed_password, p_id_lider);
         
-        -- ConfirmaÁ„o da operaÁ„o
+        -- ConfirmaÔøΩÔøΩo da operaÔøΩÔøΩo
         COMMIT;
-        DBMS_OUTPUT.PUT_LINE('Usu·rio inserido com sucesso.');
+        DBMS_OUTPUT.PUT_LINE('UsuÔøΩrio inserido com sucesso.');
         
     EXCEPTION
         WHEN OTHERS THEN
-            -- Desfazer qualquer mudanÁa caso ocorra um erro
+            -- Desfazer qualquer mudanÔøΩa caso ocorra um erro
             ROLLBACK;
-            DBMS_OUTPUT.PUT_LINE('Erro ao inserir usu·rio: ' || SQLERRM);
+            DBMS_OUTPUT.PUT_LINE('Erro ao inserir usuÔøΩrio: ' || SQLERRM);
     END insert_user;
 
-    -- FunÁ„o para login do usu·rio
+    -- FunÔøΩÔøΩo para login do usuÔøΩrio
     FUNCTION check_user (
         p_userid IN NUMBER,
         p_password IN VARCHAR2
@@ -57,7 +59,7 @@ CREATE OR REPLACE PACKAGE BODY sistema_pkg IS
         END IF;
     EXCEPTION
         WHEN NO_DATA_FOUND THEN
-            RETURN 0; -- Usu·rio n„o encontrado
+            RETURN 0; -- UsuÔøΩrio nÔøΩo encontrado
     END check_user;
 
     FUNCTION get_user_cargo(p_userid IN NUMBER) RETURN VARCHAR2 IS
@@ -69,12 +71,12 @@ CREATE OR REPLACE PACKAGE BODY sistema_pkg IS
         RETURN v_cargo;
     EXCEPTION
         WHEN NO_DATA_FOUND THEN
-            RETURN NULL; -- Usu·rio ou cargo n„o encontrado
+            RETURN NULL; -- UsuÔøΩrio ou cargo nÔøΩo encontrado
     END get_user_cargo;
     
     -- Procedimento para inserir na log
     PROCEDURE insert_log(
-        p_userid IN NUMBER,       -- parametro1: ID do usu·rio
+        p_userid IN NUMBER,       -- parametro1: ID do usuÔøΩrio
         p_message IN VARCHAR2     -- parametro2: Mensagem de log
     ) IS
     BEGIN
@@ -125,5 +127,38 @@ CREATE OR REPLACE PACKAGE BODY sistema_pkg IS
         OPEN p_cursor FOR
         SELECT CPI, NOME FROM LIDER;
     END get_all_cpis;
+
+    -- Procedimento para encontrar lideres fora da tabela user
+    CREATE OR REPLACE PROCEDURE insert_missing_users IS
+    v_hashed_password RAW(32);
+    -- Usando cursor explicito
+    CURSOR missing_users_cursor IS
+        SELECT L.CPI
+        FROM LIDER L
+        LEFT JOIN USERS U ON L.CPI = U.IdLider
+        WHERE U.IdLider IS NULL;
+    BEGIN
+    -- Definir a senha padr√£o 
+    v_hashed_password := rawtohex(dbms_obfuscation_toolkit.md5(input => utl_raw.cast_to_raw('senha_padrao')));
+
+    -- Loop no cursor
+    FOR missing_user IN missing_users_cursor LOOP
+        BEGIN
+            -- Inserir o l√≠der com a senha padr√£o
+            INSERT INTO USERS (PASSWORD, IDLIDER)
+            VALUES (v_hashed_password, missing_user.CPI);
+
+            -- Confirmar a opera√ß√£o
+            COMMIT;
+            DBMS_OUTPUT.PUT_LINE('Usu√°rio inserido para l√≠der com CPI: ' || missing_user.CPI);
+        EXCEPTION
+            WHEN OTHERS THEN
+                -- Desfazer qualquer mudan√ßa caso ocorra um erro
+                ROLLBACK;
+                DBMS_OUTPUT.PUT_LINE('Erro ao inserir usu√°rio para l√≠der com CPI: ' || missing_user.CPI || ' - ' || SQLERRM);
+        END;
+    END LOOP;
+    END insert_missing_users;
+
 END sistema_pkg;
 
