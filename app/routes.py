@@ -310,6 +310,7 @@ def credenciar_comunidade():
     action = request.form['action']
     especie = request.form['especie']
     comunidade = request.form['comunidade']
+    planeta = request.form['planeta']
     qtd_habitantes = request.form.get('qtd_habitantes')
 
     connection = oracledb.connect(

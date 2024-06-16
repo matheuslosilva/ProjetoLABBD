@@ -1,37 +1,11 @@
 CREATE OR REPLACE PACKAGE package_cientista IS
-    PROCEDURE create_estrela(
-        p_id_estrela IN VARCHAR2,
-        p_nome IN VARCHAR2,
-        p_classificacao IN VARCHAR2,
-        p_massa IN NUMBER,
-        p_x IN NUMBER,
-        p_y IN NUMBER,
-        p_z IN NUMBER
-    );
+    PROCEDURE create_estrela(p_id_estrela IN VARCHAR2,p_nome IN VARCHAR2,p_classificacao IN VARCHAR2,p_massa IN NUMBER,p_x IN NUMBER,p_y IN NUMBER,p_z IN NUMBER);
 
-    PROCEDURE read_estrela(
-        p_id_estrela IN VARCHAR2,
-        p_nome OUT VARCHAR2,
-        p_classificacao OUT VARCHAR2,
-        p_massa OUT NUMBER,
-        p_x OUT NUMBER,
-        p_y OUT NUMBER,
-        p_z OUT NUMBER
-    );
+    PROCEDURE read_estrela(p_id_estrela IN VARCHAR2,p_nome OUT VARCHAR2,p_classificacao OUT VARCHAR2,p_massa OUT NUMBER,p_x OUT NUMBER,p_y OUT NUMBER,p_z OUT NUMBER);
 
-    PROCEDURE update_estrela(
-        p_id_estrela IN VARCHAR2,
-        p_nome IN VARCHAR2,
-        p_classificacao IN VARCHAR2,
-        p_massa IN NUMBER,
-        p_x IN NUMBER,
-        p_y IN NUMBER,
-        p_z IN NUMBER
-    );
+    PROCEDURE update_estrela(p_id_estrela IN VARCHAR2,p_nome IN VARCHAR2,p_classificacao IN VARCHAR2,p_massa IN NUMBER,p_x IN NUMBER,p_y IN NUMBER,p_z IN NUMBER);
 
-    PROCEDURE delete_estrela(
-        p_id_estrela IN VARCHAR2
-    );
+    PROCEDURE delete_estrela(p_id_estrela IN VARCHAR2);
 
 END package_cientista;
 
@@ -72,7 +46,7 @@ CREATE OR REPLACE PACKAGE BODY package_cientista IS
         WHERE ID_ESTRELA = p_id_estrela;
     EXCEPTION
         WHEN NO_DATA_FOUND THEN
-            RAISE_APPLICATION_ERROR(-20002, 'Estrela não encontrada.');
+            RAISE_APPLICATION_ERROR(-20002, 'Estrela nï¿½o encontrada.');
         WHEN OTHERS THEN
             RAISE_APPLICATION_ERROR(-20003, 'Erro ao ler estrela: ' || SQLERRM);
     END read_estrela;
@@ -91,7 +65,7 @@ CREATE OR REPLACE PACKAGE BODY package_cientista IS
         SET NOME = p_nome, CLASSIFICACAO = p_classificacao, MASSA = p_massa, X = p_x, Y = p_y, Z = p_z
         WHERE ID_ESTRELA = p_id_estrela;
         IF SQL%ROWCOUNT = 0 THEN
-            RAISE_APPLICATION_ERROR(-20006, 'Estrela não encontrada para atualização.');
+            RAISE_APPLICATION_ERROR(-20006, 'Estrela nï¿½o encontrada para atualizaï¿½ï¿½o.');
         END IF;
         COMMIT;
     EXCEPTION
@@ -106,7 +80,7 @@ CREATE OR REPLACE PACKAGE BODY package_cientista IS
     BEGIN
         DELETE FROM ESTRELA WHERE ID_ESTRELA = p_id_estrela;
         IF SQL%ROWCOUNT = 0 THEN
-            RAISE_APPLICATION_ERROR(-20007, 'Estrela não encontrada para exclusão.');
+            RAISE_APPLICATION_ERROR(-20007, 'Estrela nï¿½o encontrada para exclusï¿½o.');
         END IF;
         COMMIT;
     EXCEPTION

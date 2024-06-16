@@ -1,57 +1,24 @@
 CREATE OR REPLACE PACKAGE package_lider IS
-    PROCEDURE update_faction_name(
-        p_userid IN USERS.USER_ID%TYPE,
-        p_new_name IN VARCHAR2
-    );
+    PROCEDURE update_faction_name(p_userid IN USERS.USER_ID%TYPE,p_new_name IN VARCHAR2);
 
-    PROCEDURE change_faction_leader(
-        p_userid IN USERS.USER_ID%TYPE,
-        p_new_cpi IN LIDER.CPI%TYPE
-    );
+    PROCEDURE change_faction_leader(p_userid IN USERS.USER_ID%TYPE,p_new_cpi IN LIDER.CPI%TYPE);
 
-    PROCEDURE credenciar_comunidade(
-        p_userid IN USERS.USER_ID%TYPE,
-        p_faccao IN FACCAO.NOME%TYPE,
-        p_especie IN ESPECIE.NOME%TYPE,
-        p_comunidade IN COMUNIDADE.NOME%TYPE,
-        p_planeta IN PLANETA.ID_ASTRO%TYPE,
-        p_qtd_habitantes IN NUMBER
-    );
+    PROCEDURE credenciar_comunidade(p_userid IN USERS.USER_ID%TYPE,p_faccao IN FACCAO.NOME%TYPE,p_especie IN ESPECIE.NOME%TYPE,p_comunidade IN COMUNIDADE.NOME%TYPE,p_planeta IN PLANETA.ID_ASTRO%TYPE,p_qtd_habitantes IN NUMBER);
     
-    PROCEDURE add_community_to_faction(
-        p_userid IN USERS.USER_ID%TYPE,
-        p_especie IN ESPECIE.NOME%TYPE,
-        p_comunidade IN COMUNIDADE.NOME%TYPE
-    );
+    PROCEDURE add_community_to_faction(p_userid IN USERS.USER_ID%TYPE,p_especie IN ESPECIE.NOME%TYPE,p_comunidade IN COMUNIDADE.NOME%TYPE);
     
-    PROCEDURE remover_faccao_nacao(
-        p_userid IN USERS.USER_ID%TYPE,
-        p_nacao IN NACAO.NOME%TYPE
-    );
+    PROCEDURE remover_faccao_nacao(p_userid IN USERS.USER_ID%TYPE,p_nacao IN NACAO.NOME%TYPE);
 
-    PROCEDURE get_valid_planets(
-        p_faccao IN FACCAO.NOME%TYPE,
-        p_cursor OUT SYS_REFCURSOR
-    );
+    PROCEDURE get_valid_planets(p_faccao IN FACCAO.NOME%TYPE,p_cursor OUT SYS_REFCURSOR);
 
-    PROCEDURE get_existing_communities(
-        p_userid IN USERS.USER_ID%TYPE,
-        p_cursor OUT SYS_REFCURSOR
-    );
+    PROCEDURE get_existing_communities(p_userid IN USERS.USER_ID%TYPE,p_cursor OUT SYS_REFCURSOR);
 
-    PROCEDURE get_species(
-        p_cursor OUT SYS_REFCURSOR
-    );
+    PROCEDURE get_species(p_cursor OUT SYS_REFCURSOR);
 
-    PROCEDURE get_nations_by_faction(
-        p_userid IN USERS.USER_ID%TYPE,
-        p_cursor OUT SYS_REFCURSOR
-    );
+    PROCEDURE get_nations_by_faction(p_userid IN USERS.USER_ID%TYPE,p_cursor OUT SYS_REFCURSOR);
 
 
-    FUNCTION is_lider(
-        p_userid IN USERS.USER_ID%TYPE
-    ) RETURN BOOLEAN;
+    FUNCTION is_lider(p_userid IN USERS.USER_ID%TYPE) RETURN BOOLEAN;
 END package_lider;
 
 
@@ -71,14 +38,14 @@ CREATE OR REPLACE PACKAGE BODY package_lider IS
         WHERE lider = v_cpi;
 
         IF SQL%ROWCOUNT = 0 THEN
-            RAISE_APPLICATION_ERROR(-20001, 'Usuário não é líder de nenhuma facção.');
+            RAISE_APPLICATION_ERROR(-20001, 'Usuï¿½rio nï¿½o ï¿½ lï¿½der de nenhuma facï¿½ï¿½o.');
         END IF;
 
         COMMIT;
     EXCEPTION
         WHEN OTHERS THEN
             ROLLBACK;
-            RAISE_APPLICATION_ERROR(-20002, 'Erro ao alterar o nome da facção: ' || SQLERRM);
+            RAISE_APPLICATION_ERROR(-20002, 'Erro ao alterar o nome da facï¿½ï¿½o: ' || SQLERRM);
     END update_faction_name;
 
     PROCEDURE change_faction_leader(
@@ -96,14 +63,14 @@ CREATE OR REPLACE PACKAGE BODY package_lider IS
         WHERE lider = v_cpi;
 
         IF SQL%ROWCOUNT = 0 THEN
-            RAISE_APPLICATION_ERROR(-20003, 'Usuário não é líder de nenhuma facção.');
+            RAISE_APPLICATION_ERROR(-20003, 'Usuï¿½rio nï¿½o ï¿½ lï¿½der de nenhuma facï¿½ï¿½o.');
         END IF;
 
         COMMIT;
     EXCEPTION
         WHEN OTHERS THEN
             ROLLBACK;
-            RAISE_APPLICATION_ERROR(-20004, 'Erro ao indicar novo líder: ' || SQLERRM);
+            RAISE_APPLICATION_ERROR(-20004, 'Erro ao indicar novo lï¿½der: ' || SQLERRM);
     END change_faction_leader;
 
     PROCEDURE credenciar_comunidade(
@@ -127,15 +94,15 @@ CREATE OR REPLACE PACKAGE BODY package_lider IS
         WHERE NOME = p_faccao AND LIDER = v_cpi;
 
         IF v_count = 0 THEN
-            RAISE_APPLICATION_ERROR(-20005, 'Usuário não é líder da facção especificada.');
+            RAISE_APPLICATION_ERROR(-20005, 'Usuï¿½rio nï¿½o ï¿½ lï¿½der da facï¿½ï¿½o especificada.');
         END IF;
 
-        -- Verifica se a comunidade já existe
+        -- Verifica se a comunidade jï¿½ existe
         SELECT COUNT(*) INTO v_count
         FROM COMUNIDADE
         WHERE ESPECIE = p_especie AND NOME = p_comunidade;
 
-        -- Se a comunidade não existir, cria a nova comunidade
+        -- Se a comunidade nï¿½o existir, cria a nova comunidade
         IF v_count = 0 THEN
             INSERT INTO COMUNIDADE (ESPECIE, NOME, QTD_HABITANTES)
             VALUES (p_especie, p_comunidade, p_qtd_habitantes);
@@ -180,7 +147,7 @@ CREATE OR REPLACE PACKAGE BODY package_lider IS
     EXCEPTION
         WHEN OTHERS THEN
             ROLLBACK;
-            RAISE_APPLICATION_ERROR(-20010, 'Erro ao cadastrar comunidade na facção: ' || SQLERRM);
+            RAISE_APPLICATION_ERROR(-20010, 'Erro ao cadastrar comunidade na facï¿½ï¿½o: ' || SQLERRM);
     END add_community_to_faction;
 
     PROCEDURE remover_faccao_nacao(
@@ -202,14 +169,14 @@ CREATE OR REPLACE PACKAGE BODY package_lider IS
         WHERE FACCAO = v_faccao AND NACAO = p_nacao;
 
         IF SQL%ROWCOUNT = 0 THEN
-            RAISE_APPLICATION_ERROR(-20008, 'Relacionamento entre a facção e a nação não existe.');
+            RAISE_APPLICATION_ERROR(-20008, 'Relacionamento entre a facï¿½ï¿½o e a naï¿½ï¿½o nï¿½o existe.');
         END IF;
 
         COMMIT;
     EXCEPTION
         WHEN OTHERS THEN
             ROLLBACK;
-            RAISE_APPLICATION_ERROR(-20009, 'Erro ao remover facção da nação: ' || SQLERRM);
+            RAISE_APPLICATION_ERROR(-20009, 'Erro ao remover facï¿½ï¿½o da naï¿½ï¿½o: ' || SQLERRM);
     END remover_faccao_nacao;
 
     PROCEDURE get_valid_planets(
@@ -232,12 +199,12 @@ CREATE OR REPLACE PACKAGE BODY package_lider IS
         v_cpi LIDER.CPI%TYPE;
         v_faccao FACCAO.NOME%TYPE;
     BEGIN
-        -- Obter o CPI do usuário logado
+        -- Obter o CPI do usuï¿½rio logado
         SELECT ID_LIDER INTO v_cpi
         FROM USERS
         WHERE USER_ID = p_userid;
     
-        -- Obter a facção do líder
+        -- Obter a facï¿½ï¿½o do lï¿½der
         SELECT NOME INTO v_faccao
         FROM FACCAO
         WHERE LIDER = v_cpi;
@@ -312,7 +279,7 @@ CREATE OR REPLACE PACKAGE BODY package_lider IS
         RETURN v_count > 0;
     EXCEPTION
         WHEN OTHERS THEN
-            RAISE_APPLICATION_ERROR(-20011, 'Erro ao verificar liderança: ' || SQLERRM);
+            RAISE_APPLICATION_ERROR(-20011, 'Erro ao verificar lideranï¿½a: ' || SQLERRM);
             RETURN FALSE;
     END is_lider;
 END package_lider;
