@@ -37,10 +37,5 @@ CREATE INDEX idx_habitacao_planeta_especie_comunidade ON HABITACAO(PLANETA, ESPE
 CREATE INDEX idx_comunidade_nome_especie ON COMUNIDADE(NOME, ESPECIE);
 CREATE INDEX idx_lider_cpi_nacao ON LIDER(CPI, NACAO);
 
-DROP INDEX idx_dominancia_nacao_planeta;
-DROP INDEX idx_habitacao_planeta_especie_comunidade;
-DROP INDEX idx_comunidade_nome_especie;
-DROP INDEX idx_lider_cpi_nacao;
-
 -- Enable DBMS_OUTPUT
 SET SERVEROUTPUT ON;

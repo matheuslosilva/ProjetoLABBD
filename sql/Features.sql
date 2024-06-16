@@ -7,6 +7,37 @@ BEGIN
     WHERE FACCAO = :OLD.NOME;
 END;
 
+CREATE OR REPLACE TRIGGER trg_update_faccao_name_participa
+AFTER UPDATE OF NOME ON FACCAO
+FOR EACH ROW
+BEGIN
+    UPDATE PARTICIPA
+    SET FACCAO = :NEW.NOME
+    WHERE FACCAO = :OLD.NOME;
+END;
+
+CREATE OR REPLACE TRIGGER trg_before_nacao_update
+BEFORE UPDATE OF federacao ON NACAO
+FOR EACH ROW
+DECLARE
+    v_count INTEGER;
+BEGIN
+    -- Verificar se a nova federação não é nula
+    IF :NEW.federacao IS NOT NULL THEN
+        -- Verificar se a federação já existe
+        SELECT COUNT(*) INTO v_count
+        FROM FEDERACAO
+        WHERE NOME = :NEW.federacao;
+
+        -- Inserir nova federação se não existir
+        IF v_count = 0 THEN
+            INSERT INTO FEDERACAO (NOME, DATA_FUND) VALUES (:NEW.federacao, SYSDATE);
+        END IF;
+    END IF;
+END;
+
+
+
 CREATE OR REPLACE VIEW vw_planetas_dominados AS
 SELECT 
     d.PLANETA,
