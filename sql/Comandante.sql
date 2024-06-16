@@ -4,7 +4,7 @@ CREATE OR REPLACE PACKAGE PACKAGE_COMANDANTE AS
     PROCEDURE manageFederation(user_id IN USERS.USER_ID%TYPE, nome_federacao IN FEDERACAO.NOME%TYPE, acao IN VARCHAR2);
     PROCEDURE getAvailableFederations(p_cursor OUT SYS_REFCURSOR);
     PROCEDURE createAndAssignFederation(user_id IN USERS.USER_ID%TYPE, nome_federacao IN FEDERACAO.NOME%TYPE);
-    PROCEDURE addDominance(user_id IN USERS.USER_ID%TYPE, p_planeta IN PLANETA.ID_ASTRO%TYPE);
+    PROCEDURE addDominance(user_id IN USERS.USER_ID%TYPE,p_planeta IN PLANETA.ID_ASTRO%TYPE,p_nacao IN NACAO.NOME%TYPE);
 
 END PACKAGE_COMANDANTE;
 
@@ -123,27 +123,27 @@ CREATE OR REPLACE PACKAGE BODY PACKAGE_COMANDANTE AS
             RAISE_APPLICATION_ERROR(-20006, 'Ocorreu um erro inesperado: ' || SQLERRM);
     END createAndAssignFederation;
 
-    PROCEDURE addDominance(user_id IN USERS.USER_ID%TYPE, p_planeta IN PLANETA.ID_ASTRO%TYPE) IS
-        nacao_aux NACAO.NOME%TYPE;
+    PROCEDURE addDominance(
+        user_id IN USERS.USER_ID%TYPE,
+        p_planeta IN PLANETA.ID_ASTRO%TYPE,
+        p_nacao IN NACAO.NOME%TYPE
+    ) IS
         v_count INTEGER;
     BEGIN
-        -- Obter a nação do líder
-        SELECT LIDER.NACAO INTO nacao_aux
-        FROM USERS
-        JOIN LIDER ON USERS.ID_LIDER = LIDER.CPI
-        WHERE USERS.USER_ID = user_id;
-
+        DBMS_OUTPUT.PUT_LINE('User ID: ' || user_id);
+        DBMS_OUTPUT.PUT_LINE('Nação: ' || p_nacao);
+    
         -- Verificar se o planeta está atualmente sendo dominado
         SELECT COUNT(*)
         INTO v_count
         FROM DOMINANCIA
         WHERE PLANETA = p_planeta
         AND DATA_FIM IS NULL;
-
+    
         IF v_count = 0 THEN
             -- Inserir nova dominância
             INSERT INTO DOMINANCIA (PLANETA, NACAO, DATA_INI, DATA_FIM)
-            VALUES (p_planeta, nacao_aux, SYSDATE, NULL);
+            VALUES (p_planeta, p_nacao, SYSDATE, NULL);
             COMMIT;
             DBMS_OUTPUT.PUT_LINE('Nova dominância inserida com sucesso.');
         ELSE
@@ -157,5 +157,5 @@ CREATE OR REPLACE PACKAGE BODY PACKAGE_COMANDANTE AS
 END PACKAGE_COMANDANTE;
 
 BEGIN
-    PACKAGE_COMANDANTE.addDominance(4, 'Planeta7');
+    PACKAGE_COMANDANTE.addDominance('Nacao2', 'Planeta7');
 END;
