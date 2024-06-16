@@ -5,7 +5,7 @@ explain plan set statement_id = 'consulta' for
         n.nome AS nacao,
         p.id_astro AS planeta,
         c.nome AS comunidade,
-        SUM(c.qtd_habitantes) AS qtd_habitantes
+        Sc.qtd_habitantes
     FROM
         DOMINANCIA d
     JOIN
