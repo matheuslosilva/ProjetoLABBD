@@ -95,12 +95,6 @@ def overview():
 
 
 
-@main.route('/reports')
-def reports():
-    if 'userid' not in session:
-        return redirect(url_for('main.index'))
-    return render_template('reports.html')
-
 @main.route('/cientista')
 def cientista():
     if 'userid' not in session or session['cargo'] != 'CIENTISTA ':
@@ -128,6 +122,8 @@ def create_estrela():
     cursor = connection.cursor()
     try:
         cursor.callproc('package_cientista.create_estrela', [id_estrela, nome, classificacao, massa, x, y, z])
+        log_message = f'Cientista criou estrela com ID: {id_estrela}'
+        cursor.callproc('sistema_pkg.insert_log', [session['userid'], log_message])
         connection.commit()
         flash('Star created successfully!', 'success')
     except Exception as e:
@@ -160,6 +156,8 @@ def update_estrela():
     cursor = connection.cursor()
     try:
         cursor.callproc('package_cientista.update_estrela', [id_estrela, nome, classificacao, massa, x, y, z])
+        log_message = f'Cientista Atualizou estrela com ID: {id_estrela}'
+        cursor.callproc('sistema_pkg.insert_log', [session['userid'], log_message])
         connection.commit()
         flash('Star updated successfully!', 'success')
     except Exception as e:
@@ -186,6 +184,8 @@ def delete_estrela():
     cursor = connection.cursor()
     try:
         cursor.callproc('package_cientista.delete_estrela', [id_estrela])
+        log_message = f'Cientista Deletou estrela com ID: {id_estrela}'
+        cursor.callproc('sistema_pkg.insert_log', [session['userid'], log_message])
         connection.commit()
         flash('Star deleted successfully!', 'success')
     except Exception as e:
@@ -323,8 +323,13 @@ def credenciar_comunidade():
     try:
         if action == 'create':
             cursor.callproc('package_lider.credenciar_comunidade', [session['userid'], user_details['FACCOES'][0], especie, comunidade, planeta, qtd_habitantes])
+            log_message = f'Lider credenciou comunidade em sua faccao e habitacao de planeta: {comunidade}'
+            cursor.callproc('sistema_pkg.insert_log', [session['userid'], log_message])
         else:
             cursor.callproc('package_lider.add_community_to_faction', [session['userid'], especie, comunidade])
+            log_message = f'Lider Adicionou comunidade em sua faccao: {comunidade}'
+            cursor.callproc('sistema_pkg.insert_log', [session['userid'], log_message])
+            
         flash('Comunidade credenciada com sucesso!', 'success')
     except Exception as e:
         flash(str(e), 'error')
@@ -355,6 +360,8 @@ def add_comunidades():
     try:
         cursor.callproc('package_lider.add_community_to_faction', [session['userid'], especie, comunidade])
         flash('Comunidade adicionada à facção com sucesso!', 'success')
+        log_message = f'Lider Adicionou comunidade em sua faccao: {comunidade}'
+        cursor.callproc('sistema_pkg.insert_log', [session['userid'], log_message])
     except Exception as e:
         flash(str(e), 'error')
     finally:
@@ -381,7 +388,8 @@ def update_faction_name():
         cursor.callproc('package_lider.update_faction_name', [user_id, new_name])
         connection.commit()
         flash('Nome da facção alterado com sucesso!', 'success')
-        print(" foi")
+        log_message = f'Lider mudou nome da sua faccao: {new_name}'
+        cursor.callproc('sistema_pkg.insert_log', [session['userid'], log_message])
     except Exception as e:
         connection.rollback()
         flash(str(e), 'error')
@@ -410,6 +418,8 @@ def change_faction_leader():
     try:
         cursor.callproc('package_lider.change_faction_leader', [user_id, new_cpi])
         connection.commit()
+        log_message = f'Lider mudou lider da sua faccao: {new_cpi}'
+        cursor.callproc('sistema_pkg.insert_log', [session['userid'], log_message])
         flash('Novo líder indicado com sucesso!', 'success')
     except Exception as e:
         connection.rollback()
@@ -439,6 +449,8 @@ def remover_faccao_nacao():
         cursor.callproc('package_lider.remover_faccao_nacao', [user_id, nacao])
         connection.commit()
         flash('Facção removida da nação com sucesso!', 'success')
+        log_message = f'Lider removeu faccao da nacao: {nacao}'
+        cursor.callproc('sistema_pkg.insert_log', [session['userid'], log_message])
     except Exception as e:
         connection.rollback()
         flash(str(e), 'error')
@@ -496,9 +508,9 @@ def manage_federation():
     try:
 
         cursor.callproc('PACKAGE_COMANDANTE.manageFederation', [session['userid'], federation_name, action])
-        print(" teste")
-
         flash(f'Ação {action} realizada com sucesso!', 'success')
+        log_message = f'Comandante fez {action} na federacao: {federation_name}'
+        cursor.callproc('sistema_pkg.insert_log', [session['userid'], log_message])
 
     except Exception as e:
         print(" teste")
@@ -522,6 +534,8 @@ def create_federation():
     try:
         cursor.callproc('PACKAGE_COMANDANTE.createAndAssignFederation', [session['userid'], federation_name])
         flash('Federação criada e nação associada com sucesso!', 'success')
+        log_message = f'Comandante criou federacao: {federation_name}'
+        cursor.callproc('sistema_pkg.insert_log', [session['userid'], log_message])
     except Exception as e:
         flash(str(e), 'error')
     finally:
@@ -543,6 +557,8 @@ def add_dominance():
     try:
         cursor.callproc('PACKAGE_COMANDANTE.addDominance', [user_id, planeta, user_nacao])
         flash('Dominância adicionada com sucesso!', 'success')
+        log_message = f'Comandante dominou planeta: {planeta}'
+        cursor.callproc('sistema_pkg.insert_log', [session['userid'], log_message])
     except Exception as e:
         flash(str(e), 'error')
     finally:

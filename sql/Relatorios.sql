@@ -43,40 +43,42 @@ CREATE OR REPLACE PACKAGE BODY package_relatorios AS
 
 
     PROCEDURE get_nation_inhabitants(p_userid IN USERS.USER_ID%TYPE, p_cursor OUT SYS_REFCURSOR) IS
-        v_nacao NACAO.NOME%TYPE;
-    BEGIN
-        -- Obter a nação do usuário
-        SELECT l.NACAO INTO v_nacao 
-        FROM LIDER l
-        JOIN USERS u ON u.ID_LIDER = l.CPI
-        WHERE u.USER_ID = p_userid;
-        
-        -- Obter as comunidades, planetas e a quantidade de habitantes na nação
-        OPEN p_cursor FOR
-        SELECT 
-            n.nome AS nacao,
-            p.id_astro AS planeta,
-            c.nome AS comunidade,
-            SUM(c.qtd_habitantes) AS qtd_habitantes
-        FROM
-            NACAO n
-        JOIN
-            NACAO_FACCAO nf ON nf.NACAO = n.NOME
-        JOIN
-            FACCAO f ON f.nome = nf.faccao
-        JOIN
-            PARTICIPA pc ON pc.FACCAO = f.nome
-        JOIN
-            COMUNIDADE c ON c.nome = pc.COMUNIDADE AND c.especie = pc.especie
-        JOIN
-            HABITACAO h ON h.comunidade = c.nome
-        JOIN
-            PLANETA p ON p.id_astro = h.planeta
-        WHERE
-            n.nome = v_nacao
-        GROUP BY
-            n.nome, p.id_astro, c.nome;
-    END get_nation_inhabitants;
+    v_nacao NACAO.NOME%TYPE;
+BEGIN
+    -- Obter a nação do usuário
+    SELECT l.NACAO INTO v_nacao 
+    FROM LIDER l
+    JOIN USERS u ON u.ID_LIDER = l.CPI
+    WHERE u.USER_ID = p_userid;
+
+    -- Obter as comunidades, planetas e a quantidade de habitantes na nação
+    OPEN p_cursor FOR
+    SELECT 
+        n.nome AS nacao,
+        p.id_astro AS planeta,
+        c.nome AS comunidade,
+        c.qtd_habitantes AS qtd_habitantes
+    FROM
+        DOMINANCIA d
+    JOIN
+        PLANETA p ON p.id_astro = d.planeta
+    JOIN
+        HABITACAO h ON h.planeta = p.id_astro
+    JOIN
+        COMUNIDADE c ON c.nome = h.comunidade AND c.especie = h.especie
+    JOIN
+        ESPECIE e ON e.nome = c.especie
+    JOIN
+        FACCAO f ON f.nome = (SELECT faccao FROM PARTICIPA WHERE especie = c.especie AND comunidade = c.nome)
+    JOIN
+        NACAO_FACCAO nf ON nf.faccao = f.nome
+    JOIN
+        NACAO n ON nf.nacao = n.nome
+    WHERE
+        d.nacao = v_nacao
+    ORDER BY
+        n.nome, p.id_astro, c.nome;
+END get_nation_inhabitants;
 
     PROCEDURE get_dominated_planets(p_userid IN USERS.USER_ID%TYPE, p_cursor OUT SYS_REFCURSOR) IS
         v_nacao NACAO.NOME%TYPE;
