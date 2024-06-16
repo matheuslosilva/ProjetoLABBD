@@ -531,18 +531,17 @@ def create_federation():
 
 @main.route('/add_dominance', methods=['POST'])
 def add_dominance():
-    if 'userid' not in session or session['cargo'] != 'COMANDANTE':
-        return redirect(url_for('main.index'))
+    user_id = session['userid']
+    print(session['user_details']['NACAO'])
 
+    user_nacao = session['user_details']['NACAO']
     planeta = request.form['planeta']
-
     connection = get_db_connection()
     cursor = connection.cursor()
 
-    print(session['userid'])
     try:
-        cursor.callproc('PACKAGE_COMANDANTE.addDominance', [session['userid'], planeta])
-        flash('Nova dominância inserida com sucesso!', 'success')
+        cursor.callproc('PACKAGE_COMANDANTE.addDominance', [user_id, planeta, user_nacao])
+        flash('Dominância adicionada com sucesso!', 'success')
     except Exception as e:
         flash(str(e), 'error')
     finally:
@@ -550,6 +549,7 @@ def add_dominance():
         connection.close()
 
     return redirect(url_for('main.comandante'))
+
 
 
 @main.route('/official_report')
