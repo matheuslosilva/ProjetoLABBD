@@ -21,22 +21,83 @@
     {% endwith %}
 
     <h2>User Details</h2>
-    <ul>
-        <li><strong>User ID:</strong> {{ user_details.USER_ID }}</li>
-        <li><strong>Líder ID:</strong> {{ user_details.ID_LIDER }}</li>
-        <li><strong>Nome do Líder:</strong> {{ user_details.LIDER_NOME }}</li>
-        <li><strong>Cargo:</strong> {{ user_details.CARGO }}</li>
-        <li><strong>Nação:</strong> {{ user_details.NACAO }}</li>
-        <li><strong>Espécie:</strong> {{ user_details.ESPECIE }}</li>
-        <li><strong>Nome da Facção:</strong> {{ user_details.FACCOES }}</li>
-        <li><strong>Ideologia:</strong> {{ user_details.IDEOLOGIA }}</li>
-        <li><strong>Quantidade de Nações:</strong> {{ user_details.QTD_NACOES }}</li>
-        <li><strong>Nome da Nação:</strong> {{ user_details.NACAO_NOME }}</li>
-        <li><strong>Quantidade de Planetas:</strong> {{ user_details.QTD_PLANETAS }}</li>
-        <li><strong>Nome da Espécie:</strong> {{ user_details.ESPECIE_NOME }}</li>
-        <li><strong>Planeta de Origem:</strong> {{ user_details.PLANETA_OR }}</li>
-        <li><strong>Inteligente:</strong> {{ user_details.INTELIGENTE }}</li>
-    </ul>
+    <table>
+        <tr>
+            <th>Campo</th>
+            <th>Descrição</th>
+            <th>Valor</th>
+        </tr>
+        <tr>
+            <td><strong>User ID:</strong></td>
+            <td>ID único do usuário no sistema</td>
+            <td>{{ user_details.USER_ID }}</td>
+        </tr>
+        <tr>
+            <td><strong>Líder ID:</strong></td>
+            <td>ID único do líder associado ao usuário</td>
+            <td>{{ user_details.ID_LIDER }}</td>
+        </tr>
+        <tr>
+            <td><strong>Nome do Líder:</strong></td>
+            <td>Nome do líder associado ao usuário</td>
+            <td>{{ user_details.LIDER_NOME }}</td>
+        </tr>
+        <tr>
+            <td><strong>Cargo:</strong></td>
+            <td>Função do líder (Comandante, Oficial, Cientista)</td>
+            <td>{{ user_details.CARGO }}</td>
+        </tr>
+        <tr>
+            <td><strong>Nação:</strong></td>
+            <td>Nação à qual o líder pertence</td>
+            <td>{{ user_details.NACAO }}</td>
+        </tr>
+        <tr>
+            <td><strong>Espécie:</strong></td>
+            <td>Espécie do líder</td>
+            <td>{{ user_details.ESPECIE }}</td>
+        </tr>
+        <tr>
+            <td><strong>Nome da Facção:</strong></td>
+            <td>Facção liderada pelo usuário (se aplicável)</td>
+            <td>{{ user_details.FACCOES }}</td>
+        </tr>
+        <tr>
+            <td><strong>Ideologia:</strong></td>
+            <td>Ideologia da facção</td>
+            <td>{{ user_details.IDEOLOGIA }}</td>
+        </tr>
+        <tr>
+            <td><strong>Quantidade de Nações:</strong></td>
+            <td>Número de nações associadas à facção do líder</td>
+            <td>{{ user_details.QTD_NACOES }}</td>
+        </tr>
+        <tr>
+            <td><strong>Nome da Nação:</strong></td>
+            <td>Nome da nação à qual a facção pertence</td>
+            <td>{{ user_details.NACAO_NOME }}</td>
+        </tr>
+        <tr>
+            <td><strong>Quantidade de Planetas:</strong></td>
+            <td>Número de planetas dominados pela nação</td>
+            <td>{{ user_details.QTD_PLANETAS }}</td>
+        </tr>
+        <tr>
+            <td><strong>Nome da Espécie:</strong></td>
+            <td>Nome da espécie à qual o líder pertence</td>
+            <td>{{ user_details.ESPECIE_NOME }}</td>
+        </tr>
+        <tr>
+            <td><strong>Planeta de Origem:</strong></td>
+            <td>Planeta de origem da espécie do líder</td>
+            <td>{{ user_details.PLANETA_OR }}</td>
+        </tr>
+        <tr>
+            <td><strong>Inteligente:</strong></td>
+            <td>Indica se a espécie é inteligente (V para verdadeiro, F para falso)</td>
+            <td>{{ user_details.INTELIGENTE }}</td>
+        </tr>
+    </table>
 
     <h2>Funções Disponíveis</h2>
 
@@ -48,7 +109,6 @@
     {% if user_details.CARGO != 'CIENTISTA ' and user_details.CARGO != 'COMANDANTE' %}
         <a href="{{ url_for('main.official_report') }}">Relatórios de Oficial</a>
     {% endif %}
-
 
     {% if user_details.CARGO == 'CIENTISTA ' %}
         <a href="{{ url_for('main.cientista') }}">Gerenciar Estrelas</a>
