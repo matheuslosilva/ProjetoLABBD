@@ -1,3 +1,4 @@
+-- Trigger para alteracao da faccao em nacao faccao
 CREATE OR REPLACE TRIGGER trg_update_faccao_name
 AFTER UPDATE OF NOME ON FACCAO
 FOR EACH ROW
@@ -7,6 +8,7 @@ BEGIN
     WHERE FACCAO = :OLD.NOME;
 END;
 
+-- Trigger para alteracao do nome da faccao na tabela participa
 CREATE OR REPLACE TRIGGER trg_update_faccao_name_participa
 AFTER UPDATE OF NOME ON FACCAO
 FOR EACH ROW
@@ -16,6 +18,7 @@ BEGIN
     WHERE FACCAO = :OLD.NOME;
 END;
 
+-- Trigger para alteracao de federacao na nacao
 CREATE OR REPLACE TRIGGER trg_before_nacao_update
 BEFORE UPDATE OF federacao ON NACAO
 FOR EACH ROW
@@ -37,7 +40,7 @@ BEGIN
 END;
 
 
-
+-- Essa view mostra planetas dominado com qtd_comunidades, especies e habitantes
 CREATE OR REPLACE VIEW vw_planetas_dominados AS
 SELECT 
     d.PLANETA,
@@ -66,7 +69,8 @@ FROM
     DOMINANCIA d
 WHERE 
     d.DATA_FIM IS NULL;
-    
+
+-- Essa view mostra dados sobre comunidades relacionadas as suas faccoes   
 CREATE OR REPLACE VIEW vw_faction_communities AS
 SELECT
     F.NOME AS FACCAO,

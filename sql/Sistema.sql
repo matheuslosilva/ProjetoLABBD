@@ -1,16 +1,24 @@
+-- Definicao do escopo do package sistema
 CREATE OR REPLACE PACKAGE sistema_pkg IS
+    -- cria user com base no id do lider
     PROCEDURE insert_user(p_password IN VARCHAR2, p_id_lider IN LIDER.CPI%TYPE);
 
+    -- valida user
     FUNCTION check_user(p_userid IN NUMBER, p_password IN VARCHAR2) RETURN NUMBER;
 
+    -- insere log, tanto de acesso quanto de crud
     PROCEDURE insert_log(p_userid IN NUMBER, p_message IN VARCHAR2);
 
+    -- valida o cargo do user
     FUNCTION get_user_cargo(p_userid IN NUMBER) RETURN VARCHAR2;
     
+    -- retorna dados do user
     PROCEDURE get_user_details(p_userid IN USERS.USER_ID%TYPE, p_cursor OUT SYS_REFCURSOR);
     
+    -- retorna todos os cpis pra usar em list
     PROCEDURE get_all_cpis(p_cursor OUT SYS_REFCURSOR);
 
+    -- verifica se existe lider sem user e cria automaticamente 
     PROCEDURE insert_missing_users();
 
 END sistema_pkg;

@@ -4,6 +4,9 @@ import oracledb
 import json
 
 
+## Aqui é definição de rotas e mapeamento pra integrar front e backend
+
+
 main = Blueprint('main', __name__)
 
 

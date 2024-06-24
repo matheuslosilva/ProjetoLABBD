@@ -1,3 +1,4 @@
+-- Definicao do escopo do package cientista (CRUD DE ESTRELAS)
 CREATE OR REPLACE PACKAGE package_cientista IS
     PROCEDURE create_estrela(p_id_estrela IN VARCHAR2,p_nome IN VARCHAR2,p_classificacao IN VARCHAR2,p_massa IN NUMBER,p_x IN NUMBER,p_y IN NUMBER,p_z IN NUMBER);
 

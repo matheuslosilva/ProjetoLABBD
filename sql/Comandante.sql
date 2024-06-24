@@ -1,9 +1,16 @@
+-- Definicao do escopo do package comandante
 CREATE OR REPLACE PACKAGE PACKAGE_COMANDANTE AS
+    -- Busca federacao por Userid
     PROCEDURE getFederationByUserId(user_id IN USERS.USER_ID%TYPE, p_cursor OUT SYS_REFCURSOR);
+    -- Busca planetas sem dominancia
     PROCEDURE getAvailablePlanets(p_cursor OUT SYS_REFCURSOR);
+    -- Crud de federacao
     PROCEDURE manageFederation(user_id IN USERS.USER_ID%TYPE, nome_federacao IN FEDERACAO.NOME%TYPE, acao IN VARCHAR2);
+    -- Busca federacoes disponiveis
     PROCEDURE getAvailableFederations(p_cursor OUT SYS_REFCURSOR);
+    -- Cria e relaciona federacao
     PROCEDURE createAndAssignFederation(user_id IN USERS.USER_ID%TYPE, nome_federacao IN FEDERACAO.NOME%TYPE);
+    -- Cria dominancia
     PROCEDURE addDominance(user_id IN USERS.USER_ID%TYPE,p_planeta IN PLANETA.ID_ASTRO%TYPE,p_nacao IN NACAO.NOME%TYPE);
 
 END PACKAGE_COMANDANTE;
@@ -37,7 +44,7 @@ CREATE OR REPLACE PACKAGE BODY PACKAGE_COMANDANTE AS
         cpi_aux LIDER.CPI%TYPE;
         fed_aux NACAO.FEDERACAO%TYPE;
     BEGIN
-        -- Obter a nação do líder
+        -- Obter a naï¿½ï¿½o do lï¿½der
         SELECT LIDER.NACAO INTO nacao_aux
         FROM USERS
         JOIN LIDER ON USERS.ID_LIDER = LIDER.CPI
@@ -45,45 +52,45 @@ CREATE OR REPLACE PACKAGE BODY PACKAGE_COMANDANTE AS
         AND ROWNUM = 1;
 
         IF acao = 'incluir' THEN
-            -- Verificar se a nação já possui uma federação
+            -- Verificar se a naï¿½ï¿½o jï¿½ possui uma federaï¿½ï¿½o
             BEGIN
                 SELECT federacao INTO fed_aux FROM NACAO WHERE nome = nacao_aux;
                 IF fed_aux IS NOT NULL THEN
-                    RAISE_APPLICATION_ERROR(-20001, 'Nação já está em uma federação.');
+                    RAISE_APPLICATION_ERROR(-20001, 'Naï¿½ï¿½o jï¿½ estï¿½ em uma federaï¿½ï¿½o.');
                 END IF;
             EXCEPTION
                 WHEN NO_DATA_FOUND THEN
-                    -- Se não encontrou, pode incluir
+                    -- Se nï¿½o encontrou, pode incluir
                     NULL;
             END;
 
-            -- Incluir a nação na federação
+            -- Incluir a naï¿½ï¿½o na federaï¿½ï¿½o
             UPDATE NACAO SET federacao = nome_federacao WHERE nome = nacao_aux;
-            DBMS_OUTPUT.PUT_LINE('Nação incluída na federação.');
+            DBMS_OUTPUT.PUT_LINE('Naï¿½ï¿½o incluï¿½da na federaï¿½ï¿½o.');
             commit;
 
         ELSIF acao = 'excluir' THEN
-            -- Verificar se a nação está em uma federação
+            -- Verificar se a naï¿½ï¿½o estï¿½ em uma federaï¿½ï¿½o
             BEGIN
                 SELECT federacao INTO fed_aux FROM NACAO WHERE nome = nacao_aux;
                 IF fed_aux IS NULL THEN
-                    RAISE_APPLICATION_ERROR(-20002, 'Nação não pertence a nenhuma federação.');
+                    RAISE_APPLICATION_ERROR(-20002, 'Naï¿½ï¿½o nï¿½o pertence a nenhuma federaï¿½ï¿½o.');
                 END IF;
             EXCEPTION
                 WHEN NO_DATA_FOUND THEN
-                    RAISE_APPLICATION_ERROR(-20003, 'Nenhuma federação encontrada para a nação especificada.');
+                    RAISE_APPLICATION_ERROR(-20003, 'Nenhuma federaï¿½ï¿½o encontrada para a naï¿½ï¿½o especificada.');
             END;
 
-            -- Excluir a nação da federação
+            -- Excluir a naï¿½ï¿½o da federaï¿½ï¿½o
             UPDATE NACAO SET federacao = NULL WHERE nome = nacao_aux;
-            DBMS_OUTPUT.PUT_LINE('Nação excluída da federação.');
+            DBMS_OUTPUT.PUT_LINE('Naï¿½ï¿½o excluï¿½da da federaï¿½ï¿½o.');
             commit;
         ELSE
-            RAISE_APPLICATION_ERROR(-20004, 'Ação inválida. Utilize "incluir" ou "excluir".');
+            RAISE_APPLICATION_ERROR(-20004, 'Aï¿½ï¿½o invï¿½lida. Utilize "incluir" ou "excluir".');
         END IF;
     EXCEPTION
         WHEN NO_DATA_FOUND THEN
-            RAISE_APPLICATION_ERROR(-20005, 'Nenhuma nação encontrada para o líder especificado.');
+            RAISE_APPLICATION_ERROR(-20005, 'Nenhuma naï¿½ï¿½o encontrada para o lï¿½der especificado.');
         WHEN OTHERS THEN
             RAISE_APPLICATION_ERROR(-20006, 'Ocorreu um erro inesperado: ' || SQLERRM);
     END manageFederation;
@@ -99,22 +106,22 @@ CREATE OR REPLACE PACKAGE BODY PACKAGE_COMANDANTE AS
    PROCEDURE createAndAssignFederation(user_id IN USERS.USER_ID%TYPE, nome_federacao IN FEDERACAO.NOME%TYPE) IS
         nacao_aux NACAO.NOME%TYPE;
     BEGIN
-        -- Obter a nação do líder
+        -- Obter a naï¿½ï¿½o do lï¿½der
         SELECT LIDER.NACAO INTO nacao_aux
         FROM USERS
         JOIN LIDER ON USERS.ID_LIDER = LIDER.CPI
         WHERE USERS.USER_ID = user_id
         AND ROWNUM = 1;
     
-        -- Associar a nação à nova federação (inserção na tabela FEDERACAO será tratada pelo trigger)
+        -- Associar a naï¿½ï¿½o ï¿½ nova federaï¿½ï¿½o (inserï¿½ï¿½o na tabela FEDERACAO serï¿½ tratada pelo trigger)
         UPDATE NACAO SET federacao = nome_federacao WHERE nome = nacao_aux;
     
-        DBMS_OUTPUT.PUT_LINE('Federação criada e nação associada.');
+        DBMS_OUTPUT.PUT_LINE('Federaï¿½ï¿½o criada e naï¿½ï¿½o associada.');
         
         COMMIT;
     EXCEPTION
         WHEN NO_DATA_FOUND THEN
-            RAISE_APPLICATION_ERROR(-20005, 'Nenhuma nação encontrada para o líder especificado.');
+            RAISE_APPLICATION_ERROR(-20005, 'Nenhuma naï¿½ï¿½o encontrada para o lï¿½der especificado.');
         WHEN OTHERS THEN
             ROLLBACK;
             RAISE_APPLICATION_ERROR(-20006, 'Ocorreu um erro inesperado: ' || SQLERRM);
@@ -129,9 +136,9 @@ CREATE OR REPLACE PACKAGE BODY PACKAGE_COMANDANTE AS
         v_count INTEGER;
     BEGIN
         DBMS_OUTPUT.PUT_LINE('User ID: ' || user_id);
-        DBMS_OUTPUT.PUT_LINE('Nação: ' || p_nacao);
+        DBMS_OUTPUT.PUT_LINE('Naï¿½ï¿½o: ' || p_nacao);
     
-        -- Verificar se o planeta está atualmente sendo dominado
+        -- Verificar se o planeta estï¿½ atualmente sendo dominado
         SELECT COUNT(*)
         INTO v_count
         FROM DOMINANCIA
@@ -139,17 +146,17 @@ CREATE OR REPLACE PACKAGE BODY PACKAGE_COMANDANTE AS
         AND DATA_FIM IS NULL;
     
         IF v_count = 0 THEN
-            -- Inserir nova dominância
+            -- Inserir nova dominï¿½ncia
             INSERT INTO DOMINANCIA (PLANETA, NACAO, DATA_INI, DATA_FIM)
             VALUES (p_planeta, p_nacao, SYSDATE, NULL);
             COMMIT;
-            DBMS_OUTPUT.PUT_LINE('Nova dominância inserida com sucesso.');
+            DBMS_OUTPUT.PUT_LINE('Nova dominï¿½ncia inserida com sucesso.');
         ELSE
-            DBMS_OUTPUT.PUT_LINE('Este planeta já está sendo dominado.');
+            DBMS_OUTPUT.PUT_LINE('Este planeta jï¿½ estï¿½ sendo dominado.');
         END IF;
     EXCEPTION
         WHEN OTHERS THEN
-            RAISE_APPLICATION_ERROR(-20010, 'Erro ao inserir dominância: ' || SQLERRM);
+            RAISE_APPLICATION_ERROR(-20010, 'Erro ao inserir dominï¿½ncia: ' || SQLERRM);
     END addDominance;
 
 END PACKAGE_COMANDANTE;

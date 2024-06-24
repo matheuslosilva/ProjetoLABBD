@@ -1,11 +1,18 @@
+-- Definicao do escopo do package relatorios
 CREATE OR REPLACE PACKAGE package_relatorios AS
+    -- busca comunidades por faccao
     PROCEDURE get_faction_communities(p_userid IN USERS.USER_ID%TYPE, p_cursor OUT SYS_REFCURSOR);
     
+    -- busca habitantes de uma nacao
     PROCEDURE get_nation_inhabitants(p_userid IN USERS.USER_ID%TYPE, p_cursor OUT SYS_REFCURSOR);
 
+    -- busca dados de estrelas e ou sistemas
     PROCEDURE get_astronomical_data(p_cursor OUT SYS_REFCURSOR);
     
+    -- busca planetas ja dominados
     PROCEDURE get_dominated_planets(p_userid IN USERS.USER_ID%TYPE, p_cursor OUT SYS_REFCURSOR);
+
+    -- busca planetas ainda nao dominados
     PROCEDURE get_expansion_potential_planets(p_userid IN USERS.USER_ID%TYPE, p_cursor OUT SYS_REFCURSOR);
 END package_relatorios;
 
@@ -17,10 +24,10 @@ CREATE OR REPLACE PACKAGE BODY package_relatorios AS
     ) IS
         v_cpi LIDER.CPI%TYPE;
     BEGIN
-        -- Obter o CPI do líder
+        -- Obter o CPI do lï¿½der
         SELECT ID_LIDER INTO v_cpi FROM USERS WHERE USER_ID = p_userid;
         
-        -- Obter as comunidades da facção do líder agrupadas por planeta
+        -- Obter as comunidades da facï¿½ï¿½o do lï¿½der agrupadas por planeta
         OPEN p_cursor FOR
         SELECT
             vc.PLANETA,
@@ -45,13 +52,13 @@ CREATE OR REPLACE PACKAGE BODY package_relatorios AS
     PROCEDURE get_nation_inhabitants(p_userid IN USERS.USER_ID%TYPE, p_cursor OUT SYS_REFCURSOR) IS
     v_nacao NACAO.NOME%TYPE;
 BEGIN
-    -- Obter a nação do usuário
+    -- Obter a naï¿½ï¿½o do usuï¿½rio
     SELECT l.NACAO INTO v_nacao 
     FROM LIDER l
     JOIN USERS u ON u.ID_LIDER = l.CPI
     WHERE u.USER_ID = p_userid;
 
-    -- Obter as comunidades, planetas e a quantidade de habitantes na nação
+    -- Obter as comunidades, planetas e a quantidade de habitantes na naï¿½ï¿½o
     OPEN p_cursor FOR
     SELECT 
         n.nome AS nacao,
@@ -83,13 +90,13 @@ END get_nation_inhabitants;
     PROCEDURE get_dominated_planets(p_userid IN USERS.USER_ID%TYPE, p_cursor OUT SYS_REFCURSOR) IS
         v_nacao NACAO.NOME%TYPE;
     BEGIN
-        -- Obter a nação do usuário
+        -- Obter a naï¿½ï¿½o do usuï¿½rio
         SELECT l.NACAO INTO v_nacao 
         FROM LIDER l
         JOIN USERS u ON u.ID_LIDER = l.CPI
         WHERE u.USER_ID = p_userid;
         
-        -- Obter informações sobre os planetas dominados
+        -- Obter informaï¿½ï¿½es sobre os planetas dominados
         OPEN p_cursor FOR
         SELECT 
             pd.PLANETA,
@@ -109,13 +116,13 @@ END get_nation_inhabitants;
     PROCEDURE get_expansion_potential_planets(p_userid IN USERS.USER_ID%TYPE, p_cursor OUT SYS_REFCURSOR) IS
         v_nacao NACAO.NOME%TYPE;
     BEGIN
-        -- Obter a nação do usuário
+        -- Obter a naï¿½ï¿½o do usuï¿½rio
         SELECT l.NACAO INTO v_nacao 
         FROM LIDER l
         JOIN USERS u ON u.ID_LIDER = l.CPI
         WHERE u.USER_ID = p_userid;
         
-        -- Obter planetas com potencial de expansão
+        -- Obter planetas com potencial de expansï¿½o
         OPEN p_cursor FOR
         SELECT 
             p.ID_ASTRO,
@@ -149,10 +156,10 @@ END get_nation_inhabitants;
             o.DIST_MIN,
             o.DIST_MAX,
             o.PERIODO,
-            NVL2(p.ID_ASTRO, 'Não', 'Sim') AS estrela_sem_planeta,
+            NVL2(p.ID_ASTRO, 'Nï¿½o', 'Sim') AS estrela_sem_planeta,
             (SELECT COUNT(*) FROM ORBITA_PLANETA op WHERE op.ESTRELA = e.ID_ESTRELA) AS qtd_planetas_orbitando,
             CASE 
-                WHEN e.CLASSIFICACAO IS NULL THEN 'Classificação faltante'
+                WHEN e.CLASSIFICACAO IS NULL THEN 'Classificaï¿½ï¿½o faltante'
                 WHEN e.MASSA IS NULL THEN 'Massa faltante'
                 ELSE NULL
             END AS dados_faltantes

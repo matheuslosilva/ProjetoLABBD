@@ -1,20 +1,30 @@
+-- Definicao do escopo do package lider
 CREATE OR REPLACE PACKAGE package_lider IS
+    -- atualiza nome faccao
     PROCEDURE update_faction_name(p_userid IN USERS.USER_ID%TYPE,p_new_name IN VARCHAR2);
 
+    -- altera lider da faccao
     PROCEDURE change_faction_leader(p_userid IN USERS.USER_ID%TYPE,p_new_cpi IN LIDER.CPI%TYPE);
 
+    -- cria comunidade
     PROCEDURE credenciar_comunidade(p_userid IN USERS.USER_ID%TYPE,p_faccao IN FACCAO.NOME%TYPE,p_especie IN ESPECIE.NOME%TYPE,p_comunidade IN COMUNIDADE.NOME%TYPE,p_planeta IN PLANETA.ID_ASTRO%TYPE,p_qtd_habitantes IN NUMBER);
     
+    -- adiciona comunidade a faccao
     PROCEDURE add_community_to_faction(p_userid IN USERS.USER_ID%TYPE,p_especie IN ESPECIE.NOME%TYPE,p_comunidade IN COMUNIDADE.NOME%TYPE);
     
+    -- remove faccao de nacao
     PROCEDURE remover_faccao_nacao(p_userid IN USERS.USER_ID%TYPE,p_nacao IN NACAO.NOME%TYPE);
 
+    -- busca planetas disponiveis
     PROCEDURE get_valid_planets(p_faccao IN FACCAO.NOME%TYPE,p_cursor OUT SYS_REFCURSOR);
 
+    -- busca comunidades ja existentes
     PROCEDURE get_existing_communities(p_userid IN USERS.USER_ID%TYPE,p_cursor OUT SYS_REFCURSOR);
 
+    -- busca especies
     PROCEDURE get_species(p_cursor OUT SYS_REFCURSOR);
 
+    -- busca nacoes de uma faccao
     PROCEDURE get_nations_by_faction(p_userid IN USERS.USER_ID%TYPE,p_cursor OUT SYS_REFCURSOR);
 
 
